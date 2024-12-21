@@ -8,26 +8,28 @@ import "@openzeppelin/contracts/access/Ownable2Step.sol";
 contract SOLV is ERC20, Ownable2Step {
 
     uint256 public accumulatedSupply;
-    uint256 public constant INITIAL_SUPPLY = 8_400_000_000 * 1e18;
-    uint256 public constant MAX_SUPPLY = INITIAL_SUPPLY * 2;
+    uint256 public constant MAX_SUPPLY = 8_400_000_000 * 1e18;
     uint256 public constant MINT_CYCLE = 3 * 30 * 24 * 60 * 60;
     uint256 public lastMintTimestamp;
+    address public broContractAddress;
     bool public allowInflation;
 
-    constructor(address initialHolder) ERC20("Solv", "SOLV") Ownable(msg.sender) {
-        _mint(initialHolder, INITIAL_SUPPLY);
-        accumulatedSupply = INITIAL_SUPPLY;
+   event BroContractAddressSet(address broContractAddress);
+
+    constructor() ERC20("Solv", "SOLV") Ownable(msg.sender) {
+        accumulatedSupply = 0;
         lastMintTimestamp = 0;
         allowInflation = true;
     }
 
-    function mint(address to) external onlyOwner {
+    function mint() external onlyOwner {
         require(allowInflation, "Minting finished");
         require(block.timestamp - lastMintTimestamp >= MINT_CYCLE, "Mint cycle not reached");
-        uint256 amount = INITIAL_SUPPLY * 5 / 100;
+        require(broContractAddress != address(0), "Bro contract address not set");
+        uint256 amount = MAX_SUPPLY * 5 / 100;
         require(accumulatedSupply + amount <= MAX_SUPPLY, "Max supply reached");
         accumulatedSupply += amount;
-        _mint(to, amount);
+        _mint(broContractAddress, amount);
         lastMintTimestamp = block.timestamp;
     }
 
@@ -37,6 +39,11 @@ contract SOLV is ERC20, Ownable2Step {
 
     function burn(uint256 amount) external onlyOwner {
         _burn(msg.sender, amount);
+    }
+
+    function setBroContractAddress(address _broContractAddress) external onlyOwner {
+        broContractAddress = _broContractAddress;
+        emit BroContractAddressSet(_broContractAddress);
     }
 
 }
