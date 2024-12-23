@@ -42,7 +42,12 @@ const config: HardhatUserConfig = {
       url: process.env.BSC_TESTNET_URL || `https://rpc.ankr.com/bsc_testnet_chapel`,
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    }
+    },
+    bsc: {
+      url: process.env.BSC_URL || `https://bsc-dataseed.binance.org/`,
+      accounts: 
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
   },
 
   etherscan: {
