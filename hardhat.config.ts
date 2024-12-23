@@ -38,6 +38,11 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    bsctest: {
+      url: process.env.BSC_TESTNET_URL || `https://rpc.ankr.com/bsc_testnet_chapel`,
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    }
   },
 
   etherscan: {
